@@ -1,0 +1,14 @@
+body {
+}
+
+header {
+    margin-top: 5%;
+}
+
+#file-upload {
+    text-align: center;
+}
+
+.file-icon {
+    font-size: 15em;
+}

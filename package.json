@@ -1,0 +1,23 @@
+{
+  "name": "fizykochemia",
+  "version": "1.0.0",
+  "description": "fizykochemia",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piotrkucia95/fizykochemia.git"
+  },
+  "author": "Piotr Kucia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/piotrkucia95/fizykochemia/issues"
+  },
+  "homepage": "https://github.com/piotrkucia95/fizykochemia#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.4"
+  }
+}

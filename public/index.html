@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html lang="pl">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="author" content="Piotr Kucia"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"/>
+        <title>Kalkulator entalpii</title>
+        <meta name="description" content="Prosty kalkulator entalpii"/>
+        <meta name="keywords" content="entalpia, fizykochemia, agh"/>
+        <link rel="shortcut icon" type="image/png" href="img/favicon.png"/>
+
+        <link rel="stylesheet" href="style/lib/bootstrap.min.css" type="text/css"/>
+        <link rel="stylesheet" href="style/styles.css" type="text/css"/>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+
+        <script src="app/lib/jquery-3.4.1.min.js"></script>
+        <script src="app/lib/Chart.min.js"></script>
+    </head>
+    <body>
+        <header>
+            <h1 class="text-center">Witaj w kalkulatorze entalpii!</h1>
+        </header>
+
+        <main>
+            <div id="file-upload" class="">
+                <span class="file-icon"><i class="fas fa-file-upload"></i></span>
+                <div>
+                    Przeciągnij plik z wartościami temperatury i ciepła właściwego lub wybierz go ręcznie.
+                </div>
+                <div class="mt-5">
+                    <input type="file" id="file" name="file">
+                </div>
+                <div class="mt-2">
+                    <button onclick="sendFile()">Upload</button>
+                </div>
+            </div>
+            <canvas class="d-none" id="myChart" width="600px" height="400px"></canvas>
+        </main>
+        <script src="app/main.js"></script>
+    </body>
+</html>
