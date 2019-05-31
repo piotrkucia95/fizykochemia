@@ -16,7 +16,7 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 
         <script src="app/lib/jquery-3.4.1.min.js"></script>
-        <script src="app/lib/Chart.min.js"></script>
+        <script src="app/lib/canvasjs.min.js"></script>
     </head>
     <body>
         <header>
@@ -40,51 +40,40 @@
                 <h1 id="results-title" class="pl-5">Wyniki:</h1>
                 <div class="row w-100 pt-3">
                     <div class="col-md-7 col-sm-12 pl-5 pt-4"> 
-                        <canvas id="myChart" width="600px" height="400px"></canvas>
+                        <div id="mainChartContainer" style="height: 400px; width: 100%;"></div>
                     </div>
                     <div class="col-md-5 col-sm-12 p-4">
                         <h3>Dodaj efekt cieplny:</h3>
                         <div class="form-group">
-                            <label for="temp-od">Temperatura od:</label>
-                            <input type="text" class="form-control" id="temp-od" aria-describedby="emailHelp" placeholder="Początek zakresu">
+                            <label for="temp-start">Temperatura od [&deg;C]:</label>
+                            <input type="text" class="form-control" id="temp-start" aria-describedby="emailHelp" placeholder="Początek zakresu">
                         </div>
                         <div class="form-group">
-                            <label for="temp-do">Temperatura do:</label>
-                            <input type="text" class="form-control" id="temp-do" placeholder="Koniec zakresu">
+                            <label for="temp-end">Temperatura do [&deg;C]:</label>
+                            <input type="text" class="form-control" id="temp-end" placeholder="Koniec zakresu">
                         </div>
                         <div class="form-group">
-                            <label for="temp-do">Wartość:</label>
+                            <label for="heat-value">Ciepło przemiany [J/g]:</label>
                             <input type="text" class="form-control" id="heat-value" placeholder="Wartość">
                         </div>
                         <div class="form-group">
-                            <label for="radio-group">Typ funkcji:</label>
-                            <div class="radio-group">
-                                <div class="form-check mt-1">
-                                    <input type="radio" class="form-check-input" id="function-1" name="function-type" onchange="toggleCustomFunction()">
-                                    <label class="form-check-label" for="materialGroupExample1">Pierwsza funkcja</label>
-                                </div>
-                                <div class="form-check mt-1">
-                                    <input type="radio" class="form-check-input" id="function-2" name="function-type" onchange="toggleCustomFunction()"/>
-                                    <label class="form-check-label" for="materialGroupExample1">Druga funkcja</label>
-                                </div>
-                                <div class="form-check mt-1">
-                                    <input type="radio" class="form-check-input" id="function-3" name="function-type" onchange="toggleCustomFunction()">
-                                    <label class="form-check-label" for="materialGroupExample1">Trzecia funkcja</label>
-                                </div>
-                                <div class="form-check mt-1">
-                                    <input type="radio" class="form-check-input" id="function-4" name="function-type" onchange="toggleCustomFunction()">
-                                    <label class="form-check-label" for="materialGroupExample1">Czwarta funkcja</label>
-                                </div>
-                                <div class="form-check mt-1">
-                                    <input type="radio" class="form-check-input" id="custom-function" name="function-type" onchange="toggleCustomFunction()">
-                                    <label class="form-check-label" for="materialGroupExample1">Własna (wpisz poniżej)</label>
-                                </div>
-                                <div class="form-group mt-1">
-                                    <input type="text" class="form-control" id="custom-function-input" placeholder="Własna funkcja" disabled>
-                                </div>
-                            </div>
-                            <button class="float-right m-1" onclick="exportResults()">Eksportuj wyniki</button>
-                            <button class="float-right m-1" onclick="count()">Oblicz</button>
+                            <label for="function-type">Typ funkcji:</label>
+                            <select class="form-control" id="function-type" onchange="changeFunction()">
+                                <option value="point" selected>Punktowy wzrost entalpii</option>
+                                <option value="f-2">Funkcja 2</option>
+                                <option value="f-3">Funkcja 3</option>
+                                <option value="f-4">Funkcja 4</option>
+                                <option value="custom">Własna funkcja</option>
+                            </select>
+                        </div>
+                            
+                        <div id="smallChartContainer" style="height: 150px; width: 90%" class="p-3"></div>
+                        
+                        <div class="form-group mt-1">
+                            <input type="text" class="form-control d-none" id="custom-function-input" placeholder="Równanie funkcji">
+                        </div>
+                            <button class="float-right m-1 mt-4" onclick="exportResults()">Eksportuj wyniki</button>
+                            <button class="float-right m-1 mt-4" onclick="addHeatEffect()">Oblicz</button>
                         </div>
                     </div>
                 </div>

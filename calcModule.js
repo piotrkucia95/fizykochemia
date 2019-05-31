@@ -15,9 +15,9 @@ interpolate = function(tempList, sHeatList) {
 
 calculate = function(tempList, sHeatList) {
     enthalpyList = [];
-    enthalpyList[0] = (tempList[1]-tempList[0]) * ((sHeatList[0]+sHeatList[1])/2);
-    for(var i=1; i<tempList.length-2; i++) {
-        enthalpyList[i] = enthalpyList[i-1] + ((tempList[i+1] - tempList[i]) * ((sHeatList[i] + sHeatList[i+1])/2));
+    enthalpyList[0] = tempList[0] * sHeatList[0];
+    for(var i=1; i<tempList.length; i++) {
+         enthalpyList[i] = enthalpyList[i-1] + ((tempList[i+1] - tempList[i]) * sHeatList[i]);
     }
     var result = {
         tempList: tempList,
