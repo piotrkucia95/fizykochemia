@@ -29,8 +29,9 @@ sendFile = function() {
         contentType: false,
         success : function(data) {
             $('#file-upload').addClass('d-none');
-            $("#myChart").removeClass('d-none');
-            buildLineChart(data.temps, data.entalpia);
+            $('#page-title').addClass('d-none');
+            $("#results").removeClass('d-none');
+            buildLineChart(data.tempList, data.enthalpyList);
         }
     });
 }
@@ -47,7 +48,14 @@ buildLineChart = function(xValues, yValues) {
             }]
         },
         options: {
-            responsive: false
+            responsive: true
         }
     });
+}
+
+toggleCustomFunction = function() {
+    if(document.getElementById('custom-function').checked) 
+        $('#custom-function-input').removeAttr('disabled');
+    else 
+        $('#custom-function-input').attr('disabled', 'disabled');
 }

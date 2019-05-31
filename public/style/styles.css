@@ -1,7 +1,7 @@
 body {
 }
 
-header {
+#page-title {
     margin-top: 5%;
 }
 
@@ -11,4 +11,8 @@ header {
 
 .file-icon {
     font-size: 15em;
+}
+
+#results-title {
+    margin-top: 3%;
 }

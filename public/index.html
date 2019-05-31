@@ -20,11 +20,11 @@
     </head>
     <body>
         <header>
-            <h1 class="text-center">Witaj w kalkulatorze entalpii!</h1>
+            <h1 id="page-title" class="text-center">Witaj w kalkulatorze entalpii!</h1>
         </header>
 
         <main>
-            <div id="file-upload" class="">
+            <div id="file-upload">
                 <span class="file-icon"><i class="fas fa-file-upload"></i></span>
                 <div>
                     Przeciągnij plik z wartościami temperatury i ciepła właściwego lub wybierz go ręcznie.
@@ -36,7 +36,59 @@
                     <button onclick="sendFile()">Upload</button>
                 </div>
             </div>
-            <canvas class="d-none" id="myChart" width="600px" height="400px"></canvas>
+            <div id="results" class="d-none">
+                <h1 id="results-title" class="pl-5">Wyniki:</h1>
+                <div class="row w-100 pt-3">
+                    <div class="col-md-7 col-sm-12 pl-5 pt-4"> 
+                        <canvas id="myChart" width="600px" height="400px"></canvas>
+                    </div>
+                    <div class="col-md-5 col-sm-12 p-4">
+                        <h3>Dodaj efekt cieplny:</h3>
+                        <div class="form-group">
+                            <label for="temp-od">Temperatura od:</label>
+                            <input type="text" class="form-control" id="temp-od" aria-describedby="emailHelp" placeholder="Początek zakresu">
+                        </div>
+                        <div class="form-group">
+                            <label for="temp-do">Temperatura do:</label>
+                            <input type="text" class="form-control" id="temp-do" placeholder="Koniec zakresu">
+                        </div>
+                        <div class="form-group">
+                            <label for="temp-do">Wartość:</label>
+                            <input type="text" class="form-control" id="heat-value" placeholder="Wartość">
+                        </div>
+                        <div class="form-group">
+                            <label for="radio-group">Typ funkcji:</label>
+                            <div class="radio-group">
+                                <div class="form-check mt-1">
+                                    <input type="radio" class="form-check-input" id="function-1" name="function-type" onchange="toggleCustomFunction()">
+                                    <label class="form-check-label" for="materialGroupExample1">Pierwsza funkcja</label>
+                                </div>
+                                <div class="form-check mt-1">
+                                    <input type="radio" class="form-check-input" id="function-2" name="function-type" onchange="toggleCustomFunction()"/>
+                                    <label class="form-check-label" for="materialGroupExample1">Druga funkcja</label>
+                                </div>
+                                <div class="form-check mt-1">
+                                    <input type="radio" class="form-check-input" id="function-3" name="function-type" onchange="toggleCustomFunction()">
+                                    <label class="form-check-label" for="materialGroupExample1">Trzecia funkcja</label>
+                                </div>
+                                <div class="form-check mt-1">
+                                    <input type="radio" class="form-check-input" id="function-4" name="function-type" onchange="toggleCustomFunction()">
+                                    <label class="form-check-label" for="materialGroupExample1">Czwarta funkcja</label>
+                                </div>
+                                <div class="form-check mt-1">
+                                    <input type="radio" class="form-check-input" id="custom-function" name="function-type" onchange="toggleCustomFunction()">
+                                    <label class="form-check-label" for="materialGroupExample1">Własna (wpisz poniżej)</label>
+                                </div>
+                                <div class="form-group mt-1">
+                                    <input type="text" class="form-control" id="custom-function-input" placeholder="Własna funkcja" disabled>
+                                </div>
+                            </div>
+                            <button class="float-right m-1" onclick="exportResults()">Eksportuj wyniki</button>
+                            <button class="float-right m-1" onclick="count()">Oblicz</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
         <script src="app/main.js"></script>
     </body>
