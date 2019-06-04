@@ -57,8 +57,12 @@ buildLineChart = function(chartDivId, xValues, yValues) {
         title:{
             text: ''
         },
-        axisY:{
+        axisY: {
+            title: chartDivId == 'mainChartContainer' ? 'Entalpia [J/g]' : '',
             includeZero: false
+        },
+        axisX: {
+            title: chartDivId == 'mainChartContainer' ? 'Temperatura [\xBAC]' : '',
         },
         data: [{        
             type: "spline",       
@@ -116,6 +120,8 @@ addHeatEffect = function() {
     var heatValue = parseFloat(document.getElementById('heat-value').value);
     var selectedFunction = document.getElementById('function-type').value;
 
+    if(validateHeatEffect(tempStart, tempFinish, heatValue)) return;
+
     addedEffects.push({
         tempStart: tempStart,
         tempFinish: tempFinish,
@@ -172,6 +178,7 @@ addHeatEffect = function() {
 
     if($('#added-effects').hasClass('d-none')) $('#added-effects').removeClass('d-none');
     generateTable(addedEffects);
+    clearInputs();
     getCalculatedEnthalpies(results.tempList, results.sHeatList);
 }
 
@@ -230,4 +237,53 @@ generateTable = function(effects) {
     }
     tableHtml += '</tbody></table>';
     $('#effects-table').html(tableHtml);
+}
+
+validateHeatEffect = function(tStart, tFinish, heatValue) {
+    var returnFlag = false;
+
+    if(!tStart || !tFinish || !heatValue) {
+        showToast('Wprowadź wszystkie parametry efektu cieplnego.');
+        returnFlag = true;
+    } else if(tStart > tFinish) {
+        showToast('Temperatura początkowa nie może być wyższa niż temperatura końcowa.');
+        returnFlag = true;
+    } else if(tStart < results.tempList[0]) {
+        showToast('Wprowadzona temperatura początkowa jest zbyt niska');
+        returnFlag = true;
+    } else if(tStart > results.tempList[results.tempList.length-1]) {
+        showToast('Wprowadzona temperatura początkowa jest zbyt wysoka.');
+        returnFlag = true;
+    } else if(tFinish < results.tempList[0]) {
+        showToast('Wprowadzona temperatura końcowa jest zbyt niska.');
+        returnFlag = true;
+    } else if(tFinish > results.tempList[results.tempList.length-1]) {
+        showToast('Wprowadzona temperatura końcowa jest zbyt wysoka.');
+        returnFlag = true;
+    }
+
+    if(!returnFlag) {
+        for(var effect of addedEffects) {
+            if((tStart >= effect.tempStart && tStart <= effect.tempFinish) ||
+                (tFinish <= effect.tempFinish && tFinish >= effect.tempStart)) {
+                    showToast('Wprowadzony przedział pokrywa się z jednym z wcześniej dodanych efektów.');
+                    returnFlag = true;
+            } 
+        }
+    }
+    return returnFlag;
+}
+
+clearInputs = function() {
+    document.getElementById('temp-start').value = '';
+    document.getElementById('temp-end').value = '';
+    document.getElementById('heat-value').value = '';
+    document.getElementById('function-type').value = 'point';
+}
+
+showToast = function(toastMessage) {
+    $("#snackbar").html(toastMessage).addClass('show');;
+    setTimeout(function() {  
+        $("#snackbar").removeClass('show');
+    }, 2000);
 }

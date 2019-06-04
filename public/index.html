@@ -34,7 +34,7 @@
                     <input type="file" id="file" name="file">
                 </div>
                 <div class="mt-2">
-                    <button onclick="sendFile()">Upload</button>
+                    <button onclick="sendFile()">Wczytaj</button>
                 </div>
             </div>
             <div id="results" class="d-none">
@@ -50,15 +50,15 @@
                         <h3>Dodaj efekt cieplny:</h3>
                         <div class="form-group">
                             <label for="temp-start">Temperatura od [&deg;C]:</label>
-                            <input type="text" class="form-control" id="temp-start" aria-describedby="emailHelp" placeholder="Początek zakresu">
+                            <input type="number" class="form-control" id="temp-start" aria-describedby="emailHelp" placeholder="Początek zakresu">
                         </div>
                         <div class="form-group">
                             <label for="temp-end">Temperatura do [&deg;C]:</label>
-                            <input type="text" class="form-control" id="temp-end" placeholder="Koniec zakresu">
+                            <input type="number" class="form-control" id="temp-end" placeholder="Koniec zakresu">
                         </div>
                         <div class="form-group">
                             <label for="heat-value">Ciepło przemiany [J/g]:</label>
-                            <input type="text" class="form-control" id="heat-value" placeholder="Wartość">
+                            <input type="number" class="form-control" id="heat-value" placeholder="Wartość">
                         </div>
                         <div class="form-group">
                             <label for="function-type">Typ funkcji:</label>
@@ -75,6 +75,7 @@
                     </div>
                 </div>
             </div>
+            <div id="snackbar"></div>
         </main>
         <script src="app/main.js"></script>
     </body>
