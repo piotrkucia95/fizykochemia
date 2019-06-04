@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="style/styles.css" type="text/css"/>
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 
+        <script src="app/mathFunctions.js"></script>
         <script src="app/lib/jquery-3.4.1.min.js"></script>
         <script src="app/lib/canvasjs.min.js"></script>
     </head>
@@ -37,12 +38,15 @@
                 </div>
             </div>
             <div id="results" class="d-none">
-                <h1 id="results-title" class="pl-5">Wyniki:</h1>
                 <div class="row w-100 pt-3">
-                    <div class="col-md-7 col-sm-12 pl-5 pt-4"> 
+                    <div class="col-md-7 col-sm-12 pl-5 pt-5"> 
                         <div id="mainChartContainer" style="height: 400px; width: 100%;"></div>
+                        <div id="added-effects" class="p-4 d-none">
+                            <h5>Dodane efekt cieplne:</h5>
+                            <div id="effects-table"></div>
+                        </div>
                     </div>
-                    <div class="col-md-5 col-sm-12 p-4">
+                    <div class="col-md-5 col-sm-12 p-5">
                         <h3>Dodaj efekt cieplny:</h3>
                         <div class="form-group">
                             <label for="temp-start">Temperatura od [&deg;C]:</label>
@@ -59,22 +63,15 @@
                         <div class="form-group">
                             <label for="function-type">Typ funkcji:</label>
                             <select class="form-control" id="function-type" onchange="changeFunction()">
-                                <option value="point" selected>Punktowy wzrost entalpii</option>
+                                <option value="point" selected>Punktowy przyrost ciepła</option>
+                                <option value="f-1">Funkcja 1</option>
                                 <option value="f-2">Funkcja 2</option>
-                                <option value="f-3">Funkcja 3</option>
-                                <option value="f-4">Funkcja 4</option>
-                                <option value="custom">Własna funkcja</option>
                             </select>
-                        </div>
-                            
+                        </div>     
                         <div id="smallChartContainer" style="height: 150px; width: 90%" class="p-3"></div>
                         
-                        <div class="form-group mt-1">
-                            <input type="text" class="form-control d-none" id="custom-function-input" placeholder="Równanie funkcji">
-                        </div>
-                            <button class="float-right m-1 mt-4" onclick="exportResults()">Eksportuj wyniki</button>
-                            <button class="float-right m-1 mt-4" onclick="addHeatEffect()">Oblicz</button>
-                        </div>
+                    
+                        <button class="float-right m-1 mt-5" onclick="addHeatEffect()">Oblicz</button>
                     </div>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 const express = require('express');
 const upload = require('express-fileupload');
 const calcModule = require('./calcModule.js');
-var fs = require('fs');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -14,6 +14,8 @@ var resultList = {
 const PORT = process.env.PORT || 3000;
 
 app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.urlencoded());
+app.use(bodyParser.json());
 app.use(upload());
 
 app.post('/upload', (req, res) => {
@@ -32,6 +34,13 @@ app.post('/upload', (req, res) => {
         var data = calcModule.calculate(interpolatedValues.tempList, interpolatedValues.sHeatList);
         res.send(data);
     }
+});
+
+app.post('/calculate', (req, res) => {
+    var tempList = JSON.parse(req.body.tempList);
+    var sHeatList = JSON.parse(req.body.sHeatList);
+    var data = calcModule.calculate(tempList, sHeatList);
+    res.send(data);
 });
 
 app.listen(PORT, () => {

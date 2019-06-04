@@ -3,6 +3,9 @@ let body = document.body;
 let fileInput = $('#file')[0];
 
 var results;
+var mainChart;
+var smallChart;
+var addedEffects = [];
 
 target.addEventListener('dragover', (e) => {
   e.preventDefault();
@@ -42,7 +45,6 @@ sendFile = function() {
 
 buildLineChart = function(chartDivId, xValues, yValues) {
     var dataPoints = [];
-    console.log(xValues);
     for(var i=0; i<xValues.length; i++) {
         dataPoints.push({
             x: xValues[i],
@@ -64,22 +66,48 @@ buildLineChart = function(chartDivId, xValues, yValues) {
             xValueType: "number"
         }]
     });
-    chart.render();
+    if(chartDivId == 'mainChartContainer') {
+        mainChart = chart;
+        mainChart.render();
+    } else {
+        smallChart = chart;
+        smallChart.render();
+    }
 }
 
 changeFunction = function() {
     var selectedType = document.getElementById('function-type').value;
-    if(selectedType != 'custom') {
-        $('#custom-function-input').addClass('d-none');
-        $('#smallChartContainer').removeClass('d-none');
-    }
+    var xs, ys;
+    var dataPoints = [];
 
-    if(selectedType == "point") 
-        buildLineChart("smallChartContainer",  [1, 1, 2, 3, 4, 5], [1, 0, 0, 0, 0, 0]);
-    else if (selectedType == "custom") {
-        $('#smallChartContainer').addClass('d-none');
-        $('#custom-function-input').removeClass('d-none');
+    if(selectedType == "point") {
+        xs = [0, 1, 1, 1, 2, 3, 4, 5];
+        ys = [0, 0, 1, 0, 0, 0, 0, 0];
+        for(var i=0; i<xs.length; i++) {
+            dataPoints.push({
+                x: xs[i],
+                y: ys[i]
+            });
+        }
+    } else if(selectedType == "f-1") {
+        xs = [0, 1, 2, 3, 4, 5];
+        for(var i=0; i<xs.length; i++) {
+            dataPoints.push({
+                x: xs[i],
+                y: linearFunction(xs[i])
+            });
+        }
+    } else if(selectedType == "f-2") {
+        xs = [-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2];
+        for(var i=0; i<xs.length; i++) {
+            dataPoints.push({
+                x: xs[i],
+                y: gaussFunction(xs[i])
+            });
+        }
     }
+    smallChart.options.data[0].dataPoints = dataPoints;
+    smallChart.render();
 }
 
 addHeatEffect = function() {
@@ -88,18 +116,118 @@ addHeatEffect = function() {
     var heatValue = parseFloat(document.getElementById('heat-value').value);
     var selectedFunction = document.getElementById('function-type').value;
 
-    var heatEffect = {
-        tempList: results.tempList,
-        sHeatList: results.sHeatList,
-        enthalpyList: []
-    };
+    addedEffects.push({
+        tempStart: tempStart,
+        tempFinish: tempFinish,
+        heatValue: heatValue,
+        chosenFunction: selectedFunction == 'point' ? 'Punktowy wzrost' : (selectedFunction == 'f-1' ? 'Funkcja 1' : 'Funkcja 2')
+    });
 
     if(selectedFunction == 'point') {
-        for(var i=0; i<results.enthalpyList.length; i++) {
-            if(results.enthalpyList[i] < tempStart) heatEffect.enthalpyList.push(results.enthalpyList[i]);
-            else heatEffect.enthalpyList.push(results.enthalpyList[i] + heatValue);
+        for(var i=0; i<results.sHeatList.length; i++) {
+            if(results.tempList[i] == tempStart) 
+                results.sHeatList[i] += heatValue;
+        }
+    } else if(selectedFunction == 'f-1') {
+        var calculateFunction = linearFunction;
+		var a = 0;
+        var b = 10;
+        var ref_diff = b - a;
+        var act_diff = tempFinish - tempStart;
+        var P_ref = integration(calculateFunction, a, b);
+        for(var i=0; i<results.tempList.length; i++) {
+            if(results.tempList[i] > tempStart && 
+                results.tempList[i] <= tempFinish)
+            {
+                var t_ref_1 = (results.tempList[i-1] - tempStart) / act_diff * ref_diff +a;
+                var t_ref_2 = (results.tempList[i]-tempStart) / act_diff * ref_diff +a;
+    
+                var P_act = ((calculateFunction(t_ref_1) + calculateFunction(t_ref_2)) / 2) 
+                                            * (t_ref_2 - t_ref_1);
+    
+                results.sHeatList[i] = (P_act / P_ref) * heatValue;
+            }
+        }
+    } else if(selectedFunction == 'f-2') {
+        var calculateFunction = gaussFunction;
+		var a = -2;
+        var b = 2;
+        var ref_diff = b - a;
+        var act_diff = tempFinish - tempStart;
+        var P_ref = integration(calculateFunction, a, b);
+        for(var i=0; i<results.tempList.length; i++) {
+            if(results.tempList[i] > tempStart && 
+                results.tempList[i] <= tempFinish)
+            {
+                var t_ref_1 = (results.tempList[i-1] - tempStart) / act_diff * ref_diff +a;
+                var t_ref_2 = (results.tempList[i]-tempStart) / act_diff * ref_diff +a;
+    
+                var P_act = ((calculateFunction(t_ref_1) + calculateFunction(t_ref_2)) / 2) 
+                                            * (t_ref_2 - t_ref_1);
+    
+                results.sHeatList[i] = (P_act / P_ref) * heatValue;
+            }
         }
     }
 
-    buildLineChart('mainChartContainer', heatEffect.tempList, heatEffect.enthalpyList);
+    if($('#added-effects').hasClass('d-none')) $('#added-effects').removeClass('d-none');
+    generateTable(addedEffects);
+    getCalculatedEnthalpies(results.tempList, results.sHeatList);
+}
+
+getCalculatedEnthalpies = function(tempList, heatList) {
+    $.ajax({
+        type: 'POST',
+        url: '/calculate',
+        data: {
+            'tempList': JSON.stringify(tempList),
+            'sHeatList': JSON.stringify(heatList)
+        },
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        success : function(data) {
+            results = data;
+            var dataPoints = [];
+            for(var i=0; i<data.tempList.length; i++) {
+                dataPoints.push({
+                    x: data.tempList[i],
+                    y: data.enthalpyList[i]
+                });
+            }
+            mainChart.options.data.push({        
+                type: "spline",       
+                dataPoints: dataPoints,
+                xValueType: "number"
+            });
+            mainChart.render();
+        }
+    });
+}
+
+generateTable = function(effects) {
+    var row;
+    var tableHtml = 
+        '<table class="table">' +
+        '<thead>' +
+            '<tr>' +
+            '<td scope="col">#</td>' +
+            '<td scope="col">Temp. pocz. [&deg;C]</td>' +
+            '<td scope="col">Temp. końc. [&deg;C]</td>' +
+            '<td scope="col">Ciepło [J/g]</td>' +
+            '<td scope="col">Typ funkcji</td>' +
+            '</tr>' +
+        '</thead>' +
+        '<tbody>';
+    for(var i=0; i<effects.length; i++) {
+        row = 
+        '<tr>' +
+            '<td scope="row">' + (i+1) + '</td>' +
+            '<td>' + effects[i].tempStart + '</td>' +
+            '<td>' + effects[i].tempFinish + '</td>' +
+            '<td>' + effects[i].heatValue + '</td>' +
+            '<td>' + effects[i].chosenFunction + '</td>' +
+        '</tr>';
+        tableHtml += row;
+    }
+    tableHtml += '</tbody></table>';
+    $('#effects-table').html(tableHtml);
 }
