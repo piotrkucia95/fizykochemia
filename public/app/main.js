@@ -30,10 +30,6 @@ sendFile = function() {
         return;
     }
     formData.append('file', file);
-    if(file.name.split('.').pop() != 'txt') {
-        showToast('Wybrany plik nie jest plikiem tekstowym.');
-        return;
-    }
 
     $.ajax({
         type: 'POST',
