@@ -19,7 +19,7 @@
         <script src="app/lib/jquery-3.4.1.min.js"></script>
         <script src="app/lib/canvasjs.min.js"></script>
     </head>
-    <body>
+    <body class="p-3">
         <header>
             <h1 id="page-title" class="text-center">Witaj w kalkulatorze entalpii!</h1>
         </header>
@@ -31,14 +31,14 @@
                     Przeciągnij plik z wartościami temperatury i ciepła właściwego lub wybierz go ręcznie.
                 </div>
                 <div class="mt-5">
-                    <input type="file" id="file" name="file">
+                    <input type="file" id="file" name="file" accept=".txt">
                 </div>
                 <div class="mt-2">
                     <button onclick="sendFile()">Wczytaj</button>
                 </div>
             </div>
             <div id="results" class="d-none">
-                <div class="row w-100 pt-3">
+                <div class="row w-100">
                     <div class="col-md-7 col-sm-12 pl-5 pt-5"> 
                         <div id="mainChartContainer" style="height: 400px; width: 100%;"></div>
                         <div id="added-effects" class="p-4 d-none">
@@ -46,7 +46,7 @@
                             <div id="effects-table"></div>
                         </div>
                     </div>
-                    <div class="col-md-5 col-sm-12 p-5">
+                    <div class="col-md-5 col-sm-12 p-3">
                         <h3>Dodaj efekt cieplny:</h3>
                         <div class="form-group">
                             <label for="temp-start">Temperatura od [&deg;C]:</label>

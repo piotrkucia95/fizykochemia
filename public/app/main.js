@@ -24,7 +24,12 @@ target.addEventListener('drop', (e) => {
 
 sendFile = function() {
     var formData = new FormData();
-    formData.append('file', $('#file')[0].files[0]);
+    var file = $('#file')[0].files[0]
+    if(!file) {
+        showToast('Wczytaj plik z danymi.');
+        return;
+    }
+    formData.append('file', file);
 
     $.ajax({
         type: 'POST',
