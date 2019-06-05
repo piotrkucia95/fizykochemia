@@ -142,7 +142,7 @@ addHeatEffect = function() {
     } else if(selectedFunction == 'f-1') {
         var calculateFunction = linearFunction;
 		var a = 0;
-        var b = 10;
+        var b = 5;
         var ref_diff = b - a;
         var act_diff = tempFinish - tempStart;
         var P_ref = integration(calculateFunction, a, b);
