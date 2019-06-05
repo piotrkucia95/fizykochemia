@@ -37,10 +37,14 @@ app.post('/upload', (req, res) => {
 });
 
 app.post('/calculate', (req, res) => {
-    var tempList = JSON.parse(req.body.tempList);
-    var sHeatList = JSON.parse(req.body.sHeatList);
-    var data = calcModule.calculate(tempList, sHeatList);
-    res.send(data);
+    var data = JSON.parse(req.body.data);
+    var tempStart = parseInt(req.body.tempStart);
+    var tempFinish = parseInt(req.body.tempFinish);
+    var heatValue = parseInt(req.body.heatValue);
+    var selectedFunction = req.body.selectedFunction;
+    var results = calcModule.countHeat(data, tempStart, tempFinish, heatValue, selectedFunction);
+    results = calcModule.calculate(results.tempList, results.sHeatList);
+    res.send(results);
 });
 
 app.listen(PORT, () => {

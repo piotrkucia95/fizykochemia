@@ -103,7 +103,7 @@ changeFunction = function() {
         for(var i=0; i<xs.length; i++) {
             dataPoints.push({
                 x: xs[i],
-                y: linearFunction(xs[i])
+                y: xs[i]
             });
         }
     } else if(selectedType == "f-2") {
@@ -111,7 +111,7 @@ changeFunction = function() {
         for(var i=0; i<xs.length; i++) {
             dataPoints.push({
                 x: xs[i],
-                y: gaussFunction(xs[i])
+                y: Math.exp(-(xs[i]*xs[i]))
             });
         }
     }
@@ -134,66 +134,21 @@ addHeatEffect = function() {
         chosenFunction: selectedFunction == 'point' ? 'Punktowy wzrost' : (selectedFunction == 'f-1' ? 'Funkcja 1' : 'Funkcja 2')
     });
 
-    if(selectedFunction == 'point') {
-        for(var i=0; i<results.sHeatList.length; i++) {
-            if(results.tempList[i] == tempStart) 
-                results.sHeatList[i] += heatValue;
-        }
-    } else if(selectedFunction == 'f-1') {
-        var calculateFunction = linearFunction;
-		var a = 0;
-        var b = 5;
-        var ref_diff = b - a;
-        var act_diff = tempFinish - tempStart;
-        var P_ref = integration(calculateFunction, a, b);
-        for(var i=0; i<results.tempList.length; i++) {
-            if(results.tempList[i] > tempStart && 
-                results.tempList[i] <= tempFinish)
-            {
-                var t_ref_1 = (results.tempList[i-1] - tempStart) / act_diff * ref_diff +a;
-                var t_ref_2 = (results.tempList[i]-tempStart) / act_diff * ref_diff +a;
-    
-                var P_act = ((calculateFunction(t_ref_1) + calculateFunction(t_ref_2)) / 2) 
-                                            * (t_ref_2 - t_ref_1);
-    
-                results.sHeatList[i] = (P_act / P_ref) * heatValue;
-            }
-        }
-    } else if(selectedFunction == 'f-2') {
-        var calculateFunction = gaussFunction;
-		var a = -2;
-        var b = 2;
-        var ref_diff = b - a;
-        var act_diff = tempFinish - tempStart;
-        var P_ref = integration(calculateFunction, a, b);
-        for(var i=0; i<results.tempList.length; i++) {
-            if(results.tempList[i] > tempStart && 
-                results.tempList[i] <= tempFinish)
-            {
-                var t_ref_1 = (results.tempList[i-1] - tempStart) / act_diff * ref_diff +a;
-                var t_ref_2 = (results.tempList[i]-tempStart) / act_diff * ref_diff +a;
-    
-                var P_act = ((calculateFunction(t_ref_1) + calculateFunction(t_ref_2)) / 2) 
-                                            * (t_ref_2 - t_ref_1);
-    
-                results.sHeatList[i] = (P_act / P_ref) * heatValue;
-            }
-        }
-    }
-
-    if($('#added-effects').hasClass('d-none')) $('#added-effects').removeClass('d-none');
+    getCalculatedEnthalpies(results, tempStart, tempFinish, heatValue, selectedFunction);
     generateTable(addedEffects);
     clearInputs();
-    getCalculatedEnthalpies(results.tempList, results.sHeatList);
 }
 
-getCalculatedEnthalpies = function(tempList, heatList) {
+getCalculatedEnthalpies = function(data, tempStart, tempFinish, heatValue, selectedFunction) {
     $.ajax({
         type: 'POST',
         url: '/calculate',
         data: {
-            'tempList': JSON.stringify(tempList),
-            'sHeatList': JSON.stringify(heatList)
+            'data': JSON.stringify(data),
+            'tempStart': tempStart,
+            'tempFinish': tempFinish,
+            'heatValue': heatValue,
+            'selectedFunction': selectedFunction
         },
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         success : function(data) {
@@ -216,6 +171,7 @@ getCalculatedEnthalpies = function(tempList, heatList) {
 }
 
 generateTable = function(effects) {
+    if($('#added-effects').hasClass('d-none')) $('#added-effects').removeClass('d-none');
     var row;
     var tableHtml = 
         '<table class="table">' +
@@ -284,6 +240,7 @@ clearInputs = function() {
     document.getElementById('temp-end').value = '';
     document.getElementById('heat-value').value = '';
     document.getElementById('function-type').value = 'point';
+    changeFunction();
 }
 
 showToast = function(toastMessage) {
